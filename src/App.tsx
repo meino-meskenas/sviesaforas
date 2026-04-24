@@ -1,10 +1,4 @@
-import type { Component, ComponentProps, JSX, ValidComponent } from 'solid-js';
-import {
-  createJSXParser,
-  createToken,
-  resolveData,
-} from '@solid-primitives/jsx-parser';
-import { combineProps } from '@solid-primitives/props';
+import type { Component, ComponentProps, JSX, ValidComponent } from 'solid-js'; 
 import { createSignal, onCleanup } from 'solid-js';
 function trafficLightTimer(
   greenSeconds: any,
@@ -66,14 +60,63 @@ const App: Component = () => {
   });
 
   return (
-    <div>
-      <div>{model().now}</div>
-      <div> TIME LEFT: {model().nextGreenIn}</div>
-      <div>
-        {model().nextLight} AFTER {model().nextGreenAt}
-      </div>
-      <div>NOW - {model().currentLight}</div>
+<div style={{
+  display: "flex",
+  "justify-content": "center",
+  "align-items": "center",
+  height: "100vh",
+  "font-family": "'Segoe UI', sans-serif",
+  background: "#1a1a2e",
+  color: "#eee",
+}}>
+  <div style={{
+    "text-align": "center",
+    padding: "40px",
+    "border-radius": "16px",
+    background: "#16213e",
+    "box-shadow": "0 0 30px rgba(0,0,0,0.5)",
+    "min-width": "360px",
+  }}>
+    <div style={{
+      width: "80px",
+      height: "80px",
+      "border-radius": "50%",
+      margin: "0 auto 24px",
+      background: model().currentLight === "RED" ? "#ff4444" : "#44cc44",
+      "box-shadow": `0 0 40px ${model().currentLight === "RED" ? "#ff4444" : "#44cc44"}`,
+      transition: "all 0.5s ease",
+    }} />
+
+    <div style={{ "font-size": "14px", opacity: 0.6, "margin-bottom": "8px" }}>
+      {model().now}
     </div>
+
+    <div style={{
+      "font-size": "28px",
+      "font-weight": "bold",
+      color: model().currentLight === "RED" ? "#ff4444" : "#44cc44",
+      "margin-bottom": "20px",
+    }}>
+      {model().currentLight}
+    </div>
+
+    <div style={{
+      padding: "16px",
+      background: "#0f3460",
+      "border-radius": "8px",
+      "margin-bottom": "12px",
+    }}>
+      <div style={{ "font-size": "12px", opacity: 0.6 }}>NEXT GREEN IN</div>
+      <div style={{ "font-size": "24px", "font-weight": "bold", color: "#44cc44" }}>
+        {model().nextGreenIn}
+      </div>
+    </div>
+
+    <div style={{ "font-size": "14px", opacity: 0.7 }}>
+      {model().nextLight} at {model().nextGreenAt}
+    </div>
+  </div>
+</div>
   );
 };
 
