@@ -21,7 +21,7 @@ export const Calculator = (props: { model: ICalculatiorModel }) => {
         <div style={{
             "margin": "15px",
             "text-align": "center",
-            padding: "15px",
+            padding: "5px",
             "padding-left": "25px",
             "padding-right": "25px",
             "border-radius": "16px",
@@ -33,8 +33,8 @@ export const Calculator = (props: { model: ICalculatiorModel }) => {
 
         }}>{props.model.title}</div>
             <div style={{
-                width: "80px",
-                height: "80px",
+                width: "50px",
+                height: "50px",
                 "border-radius": "50%",
                 margin: "0 auto 24px",
                 background: props.model.currentLight === "RED" ? "#ff4444" : "#44cc44",
@@ -47,7 +47,7 @@ export const Calculator = (props: { model: ICalculatiorModel }) => {
             </div>
 
             <div style={{
-                "font-size": "28px",
+                "font-size": "20px",
                 "font-weight": "bold",
                 color: props.model.currentLight === "RED" ? "#ff4444" : "#44cc44",
                 "margin-bottom": "20px",
@@ -56,10 +56,10 @@ export const Calculator = (props: { model: ICalculatiorModel }) => {
             </div>
 
             <div style={{
-                padding: "16px",
+                padding: "8px",
                 background: "#0f3460",
                 "border-radius": "8px",
-                "margin-bottom": "12px",
+                "margin-bottom": "5px",
             }}>
                 <div style={{ "font-size": "12px", opacity: 0.6 }}>CHANGE IN</div>
                 <div style={{ "font-size": "24px", "font-weight": "bold", color: "#44cc44" }}>
