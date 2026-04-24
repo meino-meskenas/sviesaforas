@@ -75,7 +75,7 @@ const App: Component = () => {
     "border-radius": "16px",
     background: "#16213e",
     "box-shadow": "0 0 30px rgba(0,0,0,0.5)",
-    "min-width": "360px",
+    "min-width": "150px",
   }}>
     <div style={{
       width: "80px",
