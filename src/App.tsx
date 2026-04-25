@@ -9,8 +9,8 @@ const App: Component = () => {
   var [vilnius, setVilnius] = createSignal<ICalculatiorModel>({} as any);
 
   setInterval(() => {
-    setKarveliskes(trafficLightTimer("Karveliskes -> Vilnius", 127, 904, '2026-04-24T07:21:31'));
-    setVilnius(trafficLightTimer("Vilnius -> Karveliskes", 127, 904, '2026-04-24T12:56:01'));
+    setKarveliskes(trafficLightTimer("Karveliskes -> Vilnius", 130, 900, '2026-04-24T07:21:31'));
+    setVilnius(trafficLightTimer("Vilnius -> Karveliskes", 130, 900, '2026-04-24T12:38:53'));
   });
 
   return (
