@@ -10,7 +10,7 @@ const App: Component = () => {
 
   setInterval(() => {
     setKarveliskes(trafficLightTimer("Karveliskes -> Vilnius", 127, 904, '2026-04-24T07:21:31'));
-    setVilnius(trafficLightTimer("Vilnius -> Karveliskes", 127, 904, '2026-04-24T12:56:54'));
+    setVilnius(trafficLightTimer("Vilnius -> Karveliskes", 127, 904, '2026-04-24T12:56:01'));
   });
 
   return (
