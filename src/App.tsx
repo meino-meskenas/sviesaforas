@@ -7,24 +7,13 @@ import { Calculator, ICalculatiorModel } from './Calculator';
 const App: Component = () => {
   var [karveliskes, setKarveliskes] = createSignal<ICalculatiorModel>({} as any);
   var [vilnius, setVilnius] = createSignal<ICalculatiorModel>({} as any);//
-  var [models, setModels] = createSignal<ICalculatiorModel[]>([] as any);//
 
-  var startedOn = "2026-04-24T17:30:39"
+  var startedOn1 = "2026-04-24T17:30:39"
   var startedOn2 = "2026-04-24T20:41:06"
-  // 13:30:04 -> cia turi buti zalia
-  // ////2026-04-24T07:21:31' 
   setInterval(() => {
-
-
-    setModels((value) => {
-      value.length = 0;
-      value.push(trafficLightTimer("Karveliskes -> Vilnius", 130, 900, new Date(startedOn)));
-      // value.push(trafficLightTimer("Karveliskes -> Vilnius", 130, 900, new Date(startedOn)));
-      return value;
-    });
-
-
-  });
+    setKarveliskes(trafficLightTimer("Karveliskes -> Vilnius", 130, 900, new Date(startedOn1)))
+    setVilnius(trafficLightTimer("Karveliskes -> Vilnius", 130, 900, new Date(startedOn2)))
+  }, 1000);
 
   return (
     <div>
@@ -39,12 +28,8 @@ const App: Component = () => {
         color: "#eee",
         "flex-direction": "column",
       }}>
-        <For each={models()}>
-          {(item) => {
-            return <Calculator model={item} ></Calculator>
-
-          }}
-        </For>
+        <Calculator model={karveliskes()} ></Calculator>
+        <Calculator model={vilnius()} ></Calculator>
       </div>
 
 
