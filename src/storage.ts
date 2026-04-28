@@ -28,6 +28,25 @@ export function saveConfigs(configs: CalculatorConfig[]): void {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(configs));
 }
 
+export function importFromJson(onImport: (configs: CalculatorConfig[]) => void): void {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/json";
+    input.onchange = () => {
+        const file = input.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            try {
+                const parsed = JSON.parse(reader.result as string);
+                if (Array.isArray(parsed)) onImport(parsed as CalculatorConfig[]);
+            } catch { /* ignore malformed file */ }
+        };
+        reader.readAsText(file);
+    };
+    input.click();
+}
+
 export function exportAsJson(configs: CalculatorConfig[]): void {
     const blob = new Blob([JSON.stringify(configs, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);

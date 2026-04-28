@@ -6,47 +6,39 @@ export function trafficLightTimer(
     title: string,
     greenSeconds: number,
     redSeconds: number,
-    redStartTime: Date,
+    greenStartTime: Date,
     now: Date = new Date(),
-    // Adjustments: list of confirmed green-start moments. Easy to remove — just delete this param and the block below.
     adjustments: AdjustmentEvent[] = []
 ): ICalculatiorModel {
-    const cycleLength = redSeconds + greenSeconds;
     const nowMs = now.getTime();
-    const cycleLengthMs = cycleLength * 1000;
+    const greenMs = greenSeconds * 1000;
     const redMs = redSeconds * 1000;
+    const cycleLengthMs = greenMs + redMs;
 
-    // --- Adjustment block (remove this block to revert to base startDate only) ---
-    let effectiveStartMs = new Date(redStartTime).getTime();
-    if (adjustments.length > 0) {
-        // Find the most recent adjustment at or before now
-        const past = adjustments
-            .map(a => new Date(a.timestamp).getTime())
-            .filter(t => t <= nowMs)
-            .sort((a, b) => b - a);
-        if (past.length > 0) {
-            // The adjustment marks a green-start, so effective red-start = adjustment - redSeconds (mod cycle)
-            // We treat the adjustment timestamp as the start of green phase.
-            // Equivalent red-start anchor = adjustmentMs - redMs (could be negative, modulo handles it)
-            effectiveStartMs = past[0] - redMs;
-        }
+    // Find the most recent green-start anchor at or before now.
+    // startDate is the baseline; any adjustment supersedes it if it's more recent.
+    let anchorMs = new Date(greenStartTime).getTime();
+    for (const adj of adjustments) {
+        const t = new Date(adj.timestamp).getTime();
+        if (t <= nowMs && t > anchorMs) anchorMs = t;
     }
-    // --- End adjustment block ---
 
-    const elapsedMs = nowMs - effectiveStartMs;
-    const posMs = ((elapsedMs % cycleLengthMs) + cycleLengthMs) % cycleLengthMs;
+    // Position within the cycle from the anchor (anchor = start of green, position 0)
+    const elapsed = nowMs - anchorMs;
+    const posMs = ((elapsed % cycleLengthMs) + cycleLengthMs) % cycleLengthMs;
 
+    // Cycle layout: [0, greenMs) = GREEN, [greenMs, cycleLengthMs) = RED
     let currentLight: 'RED' | 'GREEN';
     let nextLight: 'RED' | 'GREEN';
     let msUntilNext: number;
 
-    if (posMs < redMs) {
-        currentLight = 'RED';
-        nextLight = 'GREEN';
-        msUntilNext = redMs - posMs;
-    } else {
+    if (posMs < greenMs) {
         currentLight = 'GREEN';
         nextLight = 'RED';
+        msUntilNext = greenMs - posMs;
+    } else {
+        currentLight = 'RED';
+        nextLight = 'GREEN';
         msUntilNext = cycleLengthMs - posMs;
     }
 

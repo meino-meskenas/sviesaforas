@@ -6,6 +6,7 @@ import {
     AdjustmentEvent,
     CalculatorConfig,
     exportAsJson,
+    importFromJson,
     loadConfigs,
     saveConfigs,
 } from './storage';
@@ -17,7 +18,7 @@ const DEFAULT_CONFIGS: CalculatorConfig[] = [
         title: "Karveliskes → Vilnius",
         greenSeconds: 130,
         redSeconds: 900,
-        startDate: "2026-04-24T17:30:39",
+        startDate: "",
         adjustments: [],
     },
     {
@@ -25,33 +26,24 @@ const DEFAULT_CONFIGS: CalculatorConfig[] = [
         title: "Vilnius → Karveliskes",
         greenSeconds: 130,
         redSeconds: 900,
-        startDate: "2026-04-24T20:41:06",
+        startDate: "",
         adjustments: [],
     },
 ];
 
 function initConfigs(): CalculatorConfig[] {
-    return loadConfigs() ?? DEFAULT_CONFIGS;
-}
-
-function calcDriftSeconds(a: CalculatorConfig, b: CalculatorConfig, now: Date): number {
-    const cycle = (a.redSeconds + a.greenSeconds) * 1000;
-    const nowMs = now.getTime();
-
-    function effectiveStartMs(cfg: CalculatorConfig): number {
-        const base = new Date(cfg.startDate).getTime();
-        const redMs = cfg.redSeconds * 1000;
-        const past = cfg.adjustments
-            .map(adj => new Date(adj.timestamp).getTime())
-            .filter(t => t <= nowMs)
-            .sort((x, y) => y - x);
-        return past.length > 0 ? past[0] - redMs : base;
+    const now = new Date().toISOString();
+    const stored = loadConfigs();
+    // Fill any missing startDates with now, then persist
+    const configs = (stored ?? DEFAULT_CONFIGS).map(c =>
+        c.startDate ? c : { ...c, startDate: now }
+    );
+    if (!stored || configs.some((c, i) => !stored[i]?.startDate)) {
+        saveConfigs(configs);
     }
-
-    const posA = ((nowMs - effectiveStartMs(a)) % cycle + cycle) % cycle;
-    const posB = ((nowMs - effectiveStartMs(b)) % cycle + cycle) % cycle;
-    return Math.round((posB - posA) / 1000);
+    return configs;
 }
+
 
 const App: Component = () => {
     const [configs, setConfigs] = createSignal<CalculatorConfig[]>(initConfigs());
@@ -75,14 +67,22 @@ const App: Component = () => {
 
     function addAdjustment(cfgId: string) {
         const now = new Date();
+        const cfg = configs().find(c => c.id === cfgId);
+        if (!cfg) return;
         const adj: AdjustmentEvent = {
             id: crypto.randomUUID(),
             timestamp: now.toISOString(),
             label: `adj ${now.toLocaleTimeString()}`,
         };
-        updateConfigs(configs().map(c =>
-            c.id === cfgId ? { ...c, adjustments: [...c.adjustments, adj] } : c
-        ));
+        updateConfigs(configs().map(c => {
+            if (c.id !== cfgId) return c;
+            const updatedAdjs = [...c.adjustments, adj];
+            // Only update startDate when this is the first adjustment
+            if (c.adjustments.length === 0) {
+                return { ...c, startDate: now.toISOString(), adjustments: updatedAdjs };
+            }
+            return { ...c, adjustments: updatedAdjs };
+        }));
     }
 
     function removeAdjustment(cfgId: string, adjId: string) {
@@ -91,20 +91,23 @@ const App: Component = () => {
         ));
     }
 
-    const drift = () => {
-        const cfgs = configs();
-        if (cfgs.length < 2) return null;
-        return calcDriftSeconds(cfgs[0], cfgs[1], new Date());
-    };
+    function setStartDate(cfgId: string, isoString: string) {
+        updateConfigs(configs().map(c =>
+            c.id === cfgId ? { ...c, startDate: isoString } : c
+        ));
+    }
 
-    const driftLabel = () => {
-        const d = drift();
-        if (d === null) return null;
-        if (d === 0) return "in sync";
-        const abs = Math.abs(d);
-        const who = d > 0 ? configs()[1].title : configs()[0].title;
-        return `${abs}s ahead: ${who}`;
-    };
+    function setGreenSeconds(cfgId: string, v: number) {
+        updateConfigs(configs().map(c =>
+            c.id === cfgId ? { ...c, greenSeconds: v } : c
+        ));
+    }
+
+    function setRedSeconds(cfgId: string, v: number) {
+        updateConfigs(configs().map(c =>
+            c.id === cfgId ? { ...c, redSeconds: v } : c
+        ));
+    }
 
     return (
         // Full viewport, no overflow
@@ -127,13 +130,20 @@ const App: Component = () => {
                     SVIESAFORAS
                 </span>
                 <div style={{ display: "flex", "align-items": "center", gap: "10px" }}>
-                    <span style={{
-                        "font-size": "11px",
-                        color: drift() === 0 ? "#44cc44" : "#ffaa44",
-                        opacity: 0.85,
-                    }}>
-                        {driftLabel()}
-                    </span>
+                    <button
+                        onClick={() => importFromJson(updateConfigs)}
+                        style={{
+                            background: "transparent",
+                            color: "#aaa",
+                            border: "1px solid #333",
+                            "border-radius": "6px",
+                            padding: "3px 10px",
+                            "font-size": "11px",
+                            cursor: "pointer",
+                        }}
+                    >
+                        Import
+                    </button>
                     <button
                         onClick={() => exportAsJson(configs())}
                         style={{
@@ -163,8 +173,14 @@ const App: Component = () => {
                         <Calculator
                             model={models()[i()] ?? {} as ICalculatiorModel}
                             adjustments={cfg.adjustments}
+                            startDate={cfg.startDate}
+                            greenSeconds={cfg.greenSeconds}
+                            redSeconds={cfg.redSeconds}
                             onAddAdjustment={() => addAdjustment(cfg.id)}
                             onRemoveAdjustment={(id) => removeAdjustment(cfg.id, id)}
+                            onStartDateChange={(iso) => setStartDate(cfg.id, iso)}
+                            onGreenSecondsChange={(v) => setGreenSeconds(cfg.id, v)}
+                            onRedSecondsChange={(v) => setRedSeconds(cfg.id, v)}
                         />
                     )}
                 </For>
