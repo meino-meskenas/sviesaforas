@@ -6,11 +6,19 @@ import { Calculator, ICalculatiorModel } from './Calculator';
 
 const App: Component = () => {
   var [karveliskes, setKarveliskes] = createSignal<ICalculatiorModel>({} as any);
-  var [vilnius, setVilnius] = createSignal<ICalculatiorModel>({} as any);
+  var [vilnius, setVilnius] = createSignal<ICalculatiorModel>({} as any);//
 
+  var startedOn = "2026-04-24T17:30:39"
+  var startedOn2 = "2026-04-24T20:41:06"
+  // 13:30:04 -> cia turi buti zalia
+  // ////2026-04-24T07:21:31' 
   setInterval(() => {
-    setKarveliskes(trafficLightTimer("Karveliskes -> Vilnius", 130, 900, '2026-04-25T19:43:41'));
-    setVilnius(trafficLightTimer("Vilnius -> Karveliskes", 130, 900, '2026-04-24T12:38:53'));
+
+    //////////
+    ///////////
+    setKarveliskes(trafficLightTimer("Karveliskes -> Vilnius", 130, 900, new Date(startedOn)));
+    setVilnius(trafficLightTimer("Karveliskes -> Vilnius", 130, 900, new Date(startedOn2)));
+    // setVilnius(trafficLightTimer("Vilnius -> Karveliskes", 130, 900, new Date('2026-04-24T12:38:53')));
   });
 
   return (

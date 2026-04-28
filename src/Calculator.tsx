@@ -11,13 +11,16 @@ export interface ICalculatiorModel {
     title: string
 }
 
+const LIGHT_COLORS: Record<string, string> = {
+    RED: "#ff4444",
+    GREEN: "#44cc44",
+};
 
 export const Calculator = (props: { model: ICalculatiorModel }) => {
-
+    const color = () => LIGHT_COLORS[props.model.currentLight];
+    const nextColor = () => LIGHT_COLORS[props.model.nextLight];
 
     return (
-
-
         <div style={{
             "margin": "15px",
             "text-align": "center",
@@ -28,17 +31,17 @@ export const Calculator = (props: { model: ICalculatiorModel }) => {
             background: "#16213e",
             "box-shadow": "0 0 30px rgba(0,0,0,0.5)",
             "min-width": "150px",
-        }}>      <div style={{
-            "margin": "15px",
+            color: "white",
+        }}>
+            <div style={{ "margin": "15px" }}>{props.model.title}</div>
 
-        }}>{props.model.title}</div>
             <div style={{
                 width: "50px",
                 height: "50px",
                 "border-radius": "50%",
                 margin: "0 auto 24px",
-                background: props.model.currentLight === "RED" ? "#ff4444" : "#44cc44",
-                "box-shadow": `0 0 40px ${props.model.currentLight === "RED" ? "#ff4444" : "#44cc44"}`,
+                background: color(),
+                "box-shadow": `0 0 40px ${color()}`,
                 transition: "all 0.5s ease",
             }} />
 
@@ -49,7 +52,7 @@ export const Calculator = (props: { model: ICalculatiorModel }) => {
             <div style={{
                 "font-size": "20px",
                 "font-weight": "bold",
-                color: props.model.currentLight === "RED" ? "#ff4444" : "#44cc44",
+                color: color(),
                 "margin-bottom": "20px",
             }}>
                 {props.model.currentLight}
@@ -62,14 +65,14 @@ export const Calculator = (props: { model: ICalculatiorModel }) => {
                 "margin-bottom": "5px",
             }}>
                 <div style={{ "font-size": "12px", opacity: 0.6 }}>CHANGE IN</div>
-                <div style={{ "font-size": "24px", "font-weight": "bold", color: "#44cc44" }}>
+                <div style={{ "font-size": "24px", "font-weight": "bold", color: nextColor() }}>
                     {props.model.nextGreenIn}
                 </div>
             </div>
 
             <div style={{ "font-size": "14px", opacity: 0.7 }}>
-                {props.model.nextLight} at {props.model.nextGreenAt}
+                <span style={{ color: nextColor() }}>{props.model.nextLight}</span> at {props.model.nextGreenAt}
             </div>
         </div>
     );
-}; 
+};
