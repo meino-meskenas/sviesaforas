@@ -84,13 +84,10 @@ export const Calculator = (props: {
             "text-align": "center",
             position: "relative",
         }}>
-            {/* Title + now */}
-            <div style={{ display: "flex", "align-items": "baseline", gap: "8px", "margin-bottom": "4px" }}>
+            {/* Title */}
+            <div style={{ "margin-bottom": "4px" }}>
                 <span style={{ "font-size": "clamp(11px, 3vw, 14px)", "font-weight": "600" }}>
                     {props.model.title}
-                </span>
-                <span style={{ "font-size": "clamp(10px, 2.5vw, 12px)", opacity: 0.4 }}>
-                    {props.model.now}
                 </span>
             </div>
 

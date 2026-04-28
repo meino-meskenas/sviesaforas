@@ -131,8 +131,8 @@ const App: Component = () => {
                 background: "#16213e",
                 "flex-shrink": "0",
             }}>
-                <span style={{ "font-size": "13px", "font-weight": "bold", "letter-spacing": "1px", opacity: 0.7 }}>
-                    SVIESAFORAS
+                <span style={{ "font-size": "13px", "font-weight": "bold", "font-variant-numeric": "tabular-nums", opacity: 0.7 }}>
+                    {models()[0]?.now ?? ""}
                 </span>
                 <button
                     onClick={() => location.reload()}
