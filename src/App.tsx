@@ -57,7 +57,7 @@ const App: Component = () => {
     };
 
     tick();
-    const timer = setInterval(tick, 1000);
+    const timer = setInterval(tick, 250);
     onCleanup(() => clearInterval(timer));
 
     function updateConfigs(updated: CalculatorConfig[]) {
@@ -129,6 +129,21 @@ const App: Component = () => {
                 <span style={{ "font-size": "13px", "font-weight": "bold", "letter-spacing": "1px", opacity: 0.7 }}>
                     SVIESAFORAS
                 </span>
+                <button
+                    onClick={() => location.reload()}
+                    style={{
+                        background: "transparent",
+                        color: "#aaa",
+                        border: "1px solid #333",
+                        "border-radius": "6px",
+                        padding: "3px 10px",
+                        "font-size": "13px",
+                        cursor: "pointer",
+                        "line-height": "1",
+                    }}
+                >
+                    ↺
+                </button>
                 <div style={{ display: "flex", "align-items": "center", gap: "10px" }}>
                     <button
                         onClick={() => importFromJson(updateConfigs)}
