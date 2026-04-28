@@ -1,5 +1,5 @@
 import type { Component, ComponentProps, JSX, ValidComponent } from 'solid-js';
-import { createSignal, onCleanup } from 'solid-js';
+import { createSignal, For, onCleanup } from 'solid-js';
 import { trafficLightTimer } from './calculationFunction';
 import { Calculator, ICalculatiorModel } from './Calculator';
 
@@ -7,6 +7,7 @@ import { Calculator, ICalculatiorModel } from './Calculator';
 const App: Component = () => {
   var [karveliskes, setKarveliskes] = createSignal<ICalculatiorModel>({} as any);
   var [vilnius, setVilnius] = createSignal<ICalculatiorModel>({} as any);//
+  var [models, setModels] = createSignal<ICalculatiorModel[]>([] as any);//
 
   var startedOn = "2026-04-24T17:30:39"
   var startedOn2 = "2026-04-24T20:41:06"
@@ -14,11 +15,15 @@ const App: Component = () => {
   // ////2026-04-24T07:21:31' 
   setInterval(() => {
 
-    //////////
-    ///////////
-    setKarveliskes(trafficLightTimer("Karveliskes -> Vilnius", 130, 900, new Date(startedOn)));
-    setVilnius(trafficLightTimer("Karveliskes -> Vilnius", 130, 900, new Date(startedOn2)));
-    // setVilnius(trafficLightTimer("Vilnius -> Karveliskes", 130, 900, new Date('2026-04-24T12:38:53')));
+
+    setModels((value) => {
+      value.length = 0;
+      value.push(trafficLightTimer("Karveliskes -> Vilnius", 130, 900, new Date(startedOn)));
+      // value.push(trafficLightTimer("Karveliskes -> Vilnius", 130, 900, new Date(startedOn)));
+      return value;
+    });
+
+
   });
 
   return (
@@ -34,8 +39,12 @@ const App: Component = () => {
         color: "#eee",
         "flex-direction": "column",
       }}>
-        <Calculator model={karveliskes()} ></Calculator>
-        <Calculator model={vilnius()} ></Calculator>
+        <For each={models()}>
+          {(item) => {
+            return <Calculator model={item} ></Calculator>
+
+          }}
+        </For>
       </div>
 
 
