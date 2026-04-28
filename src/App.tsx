@@ -63,6 +63,10 @@ const App: Component = () => {
     function updateConfigs(updated: CalculatorConfig[]) {
         setConfigs(updated);
         saveConfigs(updated);
+        const now = new Date();
+        setModels(updated.map(cfg =>
+            trafficLightTimer(cfg.title, cfg.greenSeconds, cfg.redSeconds, new Date(cfg.startDate), now, cfg.adjustments)
+        ));
     }
 
     function addAdjustment(cfgId: string) {

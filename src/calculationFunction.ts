@@ -15,12 +15,30 @@ export function trafficLightTimer(
     const redMs = redSeconds * 1000;
     const cycleLengthMs = greenMs + redMs;
 
-    // Find the most recent green-start anchor at or before now.
-    // startDate is the baseline; any adjustment supersedes it if it's more recent.
-    let anchorMs = new Date(greenStartTime).getTime();
-    for (const adj of adjustments) {
-        const t = new Date(adj.timestamp).getTime();
-        if (t <= nowMs && t > anchorMs) anchorMs = t;
+    // All green-start events sorted chronologically
+    const allAnchors = [
+        new Date(greenStartTime).getTime(),
+        ...adjustments.map(a => new Date(a.timestamp).getTime()),
+    ].sort((a, b) => a - b);
+
+    // Most recent anchor at or before now
+    let anchorMs = allAnchors[0];
+    for (const t of allAnchors) {
+        if (t <= nowMs) anchorMs = t;
+    }
+
+    // Drift: average offset between actual green-start events and the predicted cycle.
+    // For each consecutive pair, the expected gap is N full cycles; remainder is drift.
+    let drift: number | null = null;
+    if (allAnchors.length >= 2) {
+        let totalDriftMs = 0;
+        for (let i = 1; i < allAnchors.length; i++) {
+            const gap = allAnchors[i] - allAnchors[i - 1];
+            const cycles = Math.round(gap / cycleLengthMs);
+            const expected = cycles * cycleLengthMs;
+            totalDriftMs += allAnchors[i] - (allAnchors[i - 1] + expected);
+        }
+        drift = Math.round(totalDriftMs / (allAnchors.length - 1) / 1000);
     }
 
     // Position within the cycle from the anchor (anchor = start of green, position 0)
@@ -54,5 +72,6 @@ export function trafficLightTimer(
         nextGreenAt: nextChangeTime.toLocaleTimeString(),
         now: now.toLocaleTimeString(),
         title,
-    } as ICalculatiorModel;
+        drift,
+    };
 }

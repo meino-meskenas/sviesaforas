@@ -8,7 +8,8 @@ export interface ICalculatiorModel {
     nextGreenAt: string,
     now: string,
     nextLight: "GREEN" | "RED",
-    title: string
+    title: string,
+    drift: number | null, // seconds; null if fewer than 2 green-start events
 }
 
 const LIGHT_COLORS: Record<string, string> = {
@@ -200,9 +201,24 @@ export const Calculator = (props: {
             </div>
 
             {/* Next state */}
-            <div style={{ "font-size": "clamp(10px, 2.5vw, 13px)", opacity: 0.6, "margin-bottom": "8px" }}>
+            <div style={{ "font-size": "clamp(10px, 2.5vw, 13px)", opacity: 0.6, "margin-bottom": "4px" }}>
                 <span style={{ color: nextColor() }}>{props.model.nextLight}</span> at {props.model.nextGreenAt}
             </div>
+
+            {/* Drift */}
+            <Show when={props.model.drift !== null}>
+                <div style={{
+                    "font-size": "clamp(9px, 2vw, 11px)",
+                    "margin-bottom": "8px",
+                    color: props.model.drift === 0 ? "#44cc44" : "#ffaa44",
+                    opacity: 0.8,
+                }}>
+                    {props.model.drift === 0
+                        ? "on time"
+                        : `${props.model.drift! > 0 ? "+" : ""}${props.model.drift}s drift`
+                    }
+                </div>
+            </Show>
 
             {/* Mark adjustment button */}
             <button
