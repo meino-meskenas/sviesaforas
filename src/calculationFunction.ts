@@ -1,4 +1,4 @@
-import { ICalculatiorModel } from "./Calculator";
+import { DriftAnalysis, ICalculatiorModel } from "./Calculator";
 import { AdjustmentEvent } from "./storage";
 
 
@@ -14,6 +14,7 @@ export function trafficLightTimer(
     const greenMs = greenSeconds * 1000;
     const redMs = redSeconds * 1000;
     const cycleLengthMs = greenMs + redMs;
+    const currentCycle = greenSeconds + redSeconds;
 
     // All green-start events sorted chronologically
     const allAnchors = [
@@ -27,18 +28,44 @@ export function trafficLightTimer(
         if (t <= nowMs) anchorMs = t;
     }
 
-    // Drift: average offset between actual green-start events and the predicted cycle.
-    // For each consecutive pair, the expected gap is N full cycles; remainder is drift.
-    let drift: number | null = null;
+    // Drift analysis across all consecutive green-start pairs
+    let driftAnalysis: DriftAnalysis | null = null;
     if (allAnchors.length >= 2) {
-        let totalDriftMs = 0;
+        const intervals: DriftAnalysis["intervals"] = [];
+        let totalCycles = 0;
+
         for (let i = 1; i < allAnchors.length; i++) {
-            const gap = allAnchors[i] - allAnchors[i - 1];
-            const cycles = Math.round(gap / cycleLengthMs);
-            const expected = cycles * cycleLengthMs;
-            totalDriftMs += allAnchors[i] - (allAnchors[i - 1] + expected);
+            const actualGapMs = allAnchors[i] - allAnchors[i - 1];
+            const cycles = Math.round(actualGapMs / cycleLengthMs);
+            const expectedGapMs = cycles * cycleLengthMs;
+            const driftMs = actualGapMs - expectedGapMs;
+            totalCycles += cycles;
+            intervals.push({
+                cycles,
+                actualGap: Math.round(actualGapMs / 1000),
+                expectedGap: Math.round(expectedGapMs / 1000),
+                drift: Math.round(driftMs / 1000),
+            });
         }
-        drift = Math.round(totalDriftMs / (allAnchors.length - 1) / 1000);
+
+        // Best-fit cycle: total time span divided by total cycle count
+        const totalSpanMs = allAnchors[allAnchors.length - 1] - allAnchors[0];
+        const suggestedCycle = totalCycles > 0
+            ? Math.round(totalSpanMs / totalCycles / 1000)
+            : currentCycle;
+
+        const avgDrift = Math.round(
+            intervals.reduce((s, r) => s + r.drift, 0) / intervals.length
+        );
+
+        driftAnalysis = {
+            intervals,
+            totalCycles,
+            avgDrift,
+            suggestedCycle,
+            currentCycle,
+            cycleDelta: suggestedCycle - currentCycle,
+        };
     }
 
     // Position within the cycle from the anchor (anchor = start of green, position 0)
@@ -72,6 +99,6 @@ export function trafficLightTimer(
         nextGreenAt: nextChangeTime.toLocaleTimeString(),
         now: now.toLocaleTimeString(),
         title,
-        drift,
+        driftAnalysis,
     };
 }

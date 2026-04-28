@@ -48,6 +48,7 @@ function initConfigs(): CalculatorConfig[] {
 const App: Component = () => {
     const [configs, setConfigs] = createSignal<CalculatorConfig[]>(initConfigs());
     const [models, setModels] = createSignal<ICalculatiorModel[]>([]);
+    const [openModalId, setOpenModalId] = createSignal<string | null>(null);
 
     const tick = () => {
         const now = new Date();
@@ -195,6 +196,9 @@ const App: Component = () => {
                             startDate={cfg.startDate}
                             greenSeconds={cfg.greenSeconds}
                             redSeconds={cfg.redSeconds}
+                            modalOpen={openModalId() === cfg.id}
+                            onModalOpen={() => setOpenModalId(cfg.id)}
+                            onModalClose={() => setOpenModalId(null)}
                             onAddAdjustment={() => addAdjustment(cfg.id)}
                             onRemoveAdjustment={(id) => removeAdjustment(cfg.id, id)}
                             onStartDateChange={(iso) => setStartDate(cfg.id, iso)}
