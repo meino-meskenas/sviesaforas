@@ -101,5 +101,6 @@ export function trafficLightTimer(
         now: now.toLocaleTimeString(),
         title,
         driftAnalysis,
+        msUntilNext,
     };
 }

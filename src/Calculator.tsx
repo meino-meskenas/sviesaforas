@@ -20,6 +20,7 @@ export interface ICalculatiorModel {
     nextLight: "GREEN" | "RED",
     title: string,
     driftAnalysis: DriftAnalysis | null,
+    msUntilNext: number,
 }
 
 const LIGHT_COLORS: Record<string, string> = {

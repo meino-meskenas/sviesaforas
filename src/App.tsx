@@ -1,5 +1,5 @@
 import type { Component } from 'solid-js';
-import { createSignal, For, onCleanup } from 'solid-js';
+import { createSignal, For, onCleanup, onMount } from 'solid-js';
 import { trafficLightTimer } from './calculationFunction';
 import { Calculator, ICalculatiorModel } from './Calculator';
 import {
@@ -49,11 +49,64 @@ const App: Component = () => {
     const [models, setModels] = createSignal<ICalculatiorModel[]>([]);
     const [openModalId, setOpenModalId] = createSignal<string | null>(null);
 
+    let audioCtx: AudioContext | null = null;
+    // Track which beep has fired per config: key = `${cfgId}-${threshold}`
+    const firedBeeps = new Set<string>();
+
+    onMount(() => {
+        // Create AudioContext on first user interaction to satisfy browser autoplay policy
+        const unlock = () => {
+            if (!audioCtx) audioCtx = new AudioContext();
+            window.removeEventListener("pointerdown", unlock);
+        };
+        window.addEventListener("pointerdown", unlock);
+    });
+
+    function beep(count: number) {
+        if (!audioCtx) return;
+        const gap = 0.18;
+        for (let i = 0; i < count; i++) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.value = 880;
+            osc.type = "sine";
+            const start = audioCtx.currentTime + i * gap;
+            gain.gain.setValueAtTime(0.4, start);
+            gain.gain.exponentialRampToValueAtTime(0.001, start + 0.12);
+            osc.start(start);
+            osc.stop(start + 0.13);
+        }
+    }
+
     const tick = () => {
         const now = new Date();
-        setModels(configs().map(cfg =>
+        const next = configs().map(cfg =>
             trafficLightTimer(cfg.title, cfg.greenSeconds, cfg.redSeconds, new Date(cfg.startDate), now, cfg.adjustments)
-        ));
+        );
+
+        // Beep alerts: 2 beeps at 60s left, 1 beep at 30s left (only when RED → GREEN transition approaching)
+        next.forEach((m, i) => {
+            const cfgId = configs()[i].id;
+            const secsLeft = Math.ceil(m.msUntilNext / 1000);
+            if (m.nextLight === "GREEN") {
+                for (const { secs, count } of [{ secs: 60, count: 2 }, { secs: 30, count: 1 }]) {
+                    const key = `${cfgId}-${secs}`;
+                    if (secsLeft <= secs && secsLeft > secs - 2) {
+                        if (!firedBeeps.has(key)) { firedBeeps.add(key); beep(count); }
+                    } else {
+                        firedBeeps.delete(key);
+                    }
+                }
+            } else {
+                // Light is GREEN, clear beep state so they fire again next red phase
+                firedBeeps.delete(`${cfgId}-60`);
+                firedBeeps.delete(`${cfgId}-30`);
+            }
+        });
+
+        setModels(next);
     };
 
     tick();
