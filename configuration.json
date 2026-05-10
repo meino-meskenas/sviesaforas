@@ -1,0 +1,85 @@
+[
+    {
+        "id": "karveliskes",
+        "title": "Karveliskes → Vilnius",
+        "greenSeconds": 130,
+        "redSeconds": 901,
+        "startDate": "2026-04-28T17:07:11.000Z",
+        "adjustments": [
+            {
+                "id": "64b28744-9c9e-4842-bb2c-9462ad0c1bd4",
+                "timestamp": "2026-04-28T17:42:56.034Z",
+                "label": "adj 20:42:56"
+            },
+            {
+                "id": "478f1bb8-6103-4cc1-b9ee-7f97d23b4d17",
+                "timestamp": "2026-04-29T05:27:23.278Z",
+                "label": "adj 08:27:23"
+            },
+            {
+                "id": "4461126d-29b2-45d2-a618-3d45146776be",
+                "timestamp": "2026-04-29T05:44:34.352Z",
+                "label": "adj 08:44:34"
+            },
+            {
+                "id": "33ddd2dc-fb63-435b-8871-433dc9616451",
+                "timestamp": "2026-04-29T06:53:17.972Z",
+                "label": "adj 09:53:17"
+            },
+            {
+                "id": "5a217571-d6e1-43f5-8fe0-f8fdffbd4020",
+                "timestamp": "2026-04-29T07:10:28.873Z",
+                "label": "adj 10:10:28"
+            },
+            {
+                "id": "5f6e5903-82e7-4531-aca1-6ba11e81f801",
+                "timestamp": "2026-04-29T09:10:45.405Z",
+                "label": "adj 12:10:45"
+            },
+            {
+                "id": "33c0d983-7ed5-405f-9905-35bcfb4f3e38",
+                "timestamp": "2026-04-30T04:21:56.220Z",
+                "label": "adj 07:21:56"
+            },
+            {
+                "id": "3b9c2b95-2993-4d66-8cfd-47fc6acb0a25",
+                "timestamp": "2026-04-30T06:22:13.863Z",
+                "label": "adj 09:22:13"
+            },
+            {
+                "id": "56792e15-ba59-429e-a401-a647e186f713",
+                "timestamp": "2026-05-03T07:40:45.130Z",
+                "label": "adj 10:40:45"
+            },
+            {
+                "id": "aa406cae-985e-484b-8402-ac55b0b86c7a",
+                "timestamp": "2026-05-06T14:25:44.920Z",
+                "label": "adj 17:25:44"
+            }
+        ]
+    },
+    {
+        "id": "vilnius",
+        "title": "Vilnius → Karveliskes",
+        "greenSeconds": 130,
+        "redSeconds": 901,
+        "startDate": "2026-04-29T09:01:34.661Z",
+        "adjustments": [
+            {
+                "id": "03ca7636-8435-4fbd-95b9-19ba7dc15a7f",
+                "timestamp": "2026-04-29T09:01:34.661Z",
+                "label": "adj 12:01:34"
+            },
+            {
+                "id": "b4ab8dd1-ef76-4470-9522-4b6b690c8bd6",
+                "timestamp": "2026-05-01T15:26:07.742Z",
+                "label": "adj 18:26:07"
+            },
+            {
+                "id": "7777259b-5f9a-4538-9e18-539ee8deb16f",
+                "timestamp": "2026-05-06T16:34:14.457Z",
+                "label": "adj 19:34:14"
+            }
+        ]
+    }
+]

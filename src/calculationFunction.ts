@@ -48,10 +48,11 @@ export function trafficLightTimer(
             });
         }
 
-        // Best-fit cycle: total time span divided by total cycle count
-        const totalSpanMs = allAnchors[allAnchors.length - 1] - allAnchors[0];
+        // Best-fit cycle: weighted by cycle count, ms precision
+        const weightedSumMs = intervals.reduce((s, r, i) =>
+            s + r.cycles * (allAnchors[i + 1] - allAnchors[i]), 0);
         const suggestedCycle = totalCycles > 0
-            ? Math.round(totalSpanMs / totalCycles / 1000)
+            ? Math.round(weightedSumMs / totalCycles) / 1000
             : currentCycle;
 
         const avgDrift = Math.round(
@@ -64,7 +65,7 @@ export function trafficLightTimer(
             avgDrift,
             suggestedCycle,
             currentCycle,
-            cycleDelta: suggestedCycle - currentCycle,
+            cycleDelta: Math.round((suggestedCycle - currentCycle) * 1000) / 1000,
         };
     }
 

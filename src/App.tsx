@@ -12,21 +12,21 @@ import {
 } from './storage';
 
 
-const DEFAULT_CONFIGS: CalculatorConfig[] = [
+const BEST_CONFIGS: CalculatorConfig[] = [
     {
         id: "karveliskes",
         title: "Karveliskes → Vilnius",
         greenSeconds: 130,
-        redSeconds: 900,
-        startDate: "",
+        redSeconds: 900.919,
+        startDate: "2026-05-06T14:25:44.920Z",
         adjustments: [],
     },
     {
         id: "vilnius",
         title: "Vilnius → Karveliskes",
         greenSeconds: 130,
-        redSeconds: 900,
-        startDate: "",
+        redSeconds: 900.919,
+        startDate: "2026-05-06T16:34:14.457Z",
         adjustments: [],
     },
 ];
@@ -34,8 +34,7 @@ const DEFAULT_CONFIGS: CalculatorConfig[] = [
 function initConfigs(): CalculatorConfig[] {
     const now = new Date().toISOString();
     const stored = loadConfigs();
-    // Fill any missing startDates with now, then persist
-    const configs = (stored ?? DEFAULT_CONFIGS).map(c =>
+    const configs = (stored ?? BEST_CONFIGS).map(c =>
         c.startDate ? c : { ...c, startDate: now }
     );
     if (!stored || configs.some((c, i) => !stored[i]?.startDate)) {
@@ -134,21 +133,41 @@ const App: Component = () => {
                 <span style={{ "font-size": "13px", "font-weight": "bold", "font-variant-numeric": "tabular-nums", opacity: 0.7 }}>
                     {models()[0]?.now ?? ""}
                 </span>
-                <button
-                    onClick={() => location.reload()}
-                    style={{
-                        background: "transparent",
-                        color: "#aaa",
-                        border: "1px solid #333",
-                        "border-radius": "6px",
-                        padding: "3px 10px",
-                        "font-size": "13px",
-                        cursor: "pointer",
-                        "line-height": "1",
-                    }}
-                >
-                    ↺
-                </button>
+                <div style={{ display: "flex", gap: "6px" }}>
+                    <button
+                        onClick={() => location.reload()}
+                        style={{
+                            background: "transparent",
+                            color: "#aaa",
+                            border: "1px solid #333",
+                            "border-radius": "6px",
+                            padding: "3px 10px",
+                            "font-size": "13px",
+                            cursor: "pointer",
+                            "line-height": "1",
+                        }}
+                    >
+                        ↺
+                    </button>
+                    <button
+                        onClick={() => {
+                            if (confirm("Reset to best known configuration? This will clear all current data.")) {
+                                updateConfigs(BEST_CONFIGS);
+                            }
+                        }}
+                        style={{
+                            background: "transparent",
+                            color: "#ff6644",
+                            border: "1px solid #ff664444",
+                            "border-radius": "6px",
+                            padding: "3px 10px",
+                            "font-size": "11px",
+                            cursor: "pointer",
+                        }}
+                    >
+                        Reset
+                    </button>
+                </div>
                 <div style={{ display: "flex", "align-items": "center", gap: "10px" }}>
                     <button
                         onClick={() => importFromJson(updateConfigs)}

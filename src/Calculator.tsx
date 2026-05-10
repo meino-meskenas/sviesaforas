@@ -187,7 +187,7 @@ export const Calculator = (props: {
                                     border: "1px solid #ffaa4466",
                                 }}
                             >
-                                adjust {d > 0 ? "+" : ""}{d}s
+                                adjust {d > 0 ? "+" : ""}{d.toFixed(3)}s
                             </button>
                         );
                     }}
@@ -245,11 +245,11 @@ export const Calculator = (props: {
                                 <label style={{ display: "flex", "align-items": "center", gap: "4px" }}>
                                     <span style={{ color: "#44cc44" }}>green</span>
                                     <input
-                                        type="number" min="1" value={props.greenSeconds}
-                                        onBlur={(e) => props.onGreenSecondsChange(Math.max(1, parseInt(e.currentTarget.value) || props.greenSeconds))}
+                                        type="number" min="0.001" step="0.001" value={props.greenSeconds}
+                                        onBlur={(e) => props.onGreenSecondsChange(Math.max(0.001, parseFloat(e.currentTarget.value) || props.greenSeconds))}
                                         onKeyDown={(e) => { if (e.key === "Enter") (e.currentTarget as HTMLInputElement).blur(); }}
                                         style={{
-                                            width: "56px", background: "#0f3460", color: "#eee",
+                                            width: "80px", background: "#0f3460", color: "#eee",
                                             border: "1px solid #44cc4488", "border-radius": "4px",
                                             padding: "3px 4px", "font-size": "13px", "font-family": "inherit", "text-align": "right",
                                         }}
@@ -258,11 +258,11 @@ export const Calculator = (props: {
                                 <label style={{ display: "flex", "align-items": "center", gap: "4px" }}>
                                     <span style={{ color: "#ff4444" }}>red</span>
                                     <input
-                                        type="number" min="1" value={props.redSeconds}
-                                        onBlur={(e) => props.onRedSecondsChange(Math.max(1, parseInt(e.currentTarget.value) || props.redSeconds))}
+                                        type="number" min="0.001" step="0.001" value={props.redSeconds}
+                                        onBlur={(e) => props.onRedSecondsChange(Math.max(0.001, parseFloat(e.currentTarget.value) || props.redSeconds))}
                                         onKeyDown={(e) => { if (e.key === "Enter") (e.currentTarget as HTMLInputElement).blur(); }}
                                         style={{
-                                            width: "56px", background: "#0f3460", color: "#eee",
+                                            width: "80px", background: "#0f3460", color: "#eee",
                                             border: "1px solid #ff444488", "border-radius": "4px",
                                             padding: "3px 4px", "font-size": "13px", "font-family": "inherit", "text-align": "right",
                                         }}
@@ -306,15 +306,15 @@ export const Calculator = (props: {
                                                 </div>
                                                 <div style={{ display: "flex", "justify-content": "space-between", opacity: 0.7 }}>
                                                     <span>current cycle</span>
-                                                    <span>{da.currentCycle}s</span>
+                                                    <span>{da.currentCycle.toFixed(3)}s</span>
                                                 </div>
                                                 <div style={{ display: "flex", "justify-content": "space-between" }}>
                                                     <span style={{ "font-weight": "600" }}>suggested cycle</span>
                                                     <span style={{ color: da.cycleDelta === 0 ? "#44cc44" : "#ffaa44", "font-weight": "600" }}>
-                                                        {da.suggestedCycle}s
+                                                        {da.suggestedCycle.toFixed(3)}s
                                                         <Show when={da.cycleDelta !== 0}>
                                                             <span style={{ opacity: 0.6, "font-weight": "400" }}>
-                                                                {" "}({da.cycleDelta > 0 ? "+" : ""}{da.cycleDelta}s)
+                                                                {" "}({da.cycleDelta > 0 ? "+" : ""}{da.cycleDelta.toFixed(3)}s)
                                                             </span>
                                                         </Show>
                                                     </span>
