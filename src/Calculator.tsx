@@ -150,7 +150,7 @@ export const Calculator = (props: {
                 <div style={{ "font-size": "clamp(9px, 2vw, 11px)", opacity: 0.5, "margin-bottom": "1px" }}>
                     CHANGE IN
                 </div>
-                <div style={{ "font-size": "clamp(18px, 5vw, 26px)", "font-weight": "bold", color: nextColor() }}>
+                <div style={{ "font-size": "clamp(18px, 5vw, 26px)", "font-weight": "bold", color: color() }}>
                     {props.model.nextGreenIn}
                 </div>
             </div>

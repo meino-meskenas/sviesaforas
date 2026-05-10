@@ -86,12 +86,12 @@ const App: Component = () => {
             trafficLightTimer(cfg.title, cfg.greenSeconds, cfg.redSeconds, new Date(cfg.startDate), now, cfg.adjustments)
         );
 
-        // Beep alerts: 2 beeps at 60s left, 1 beep at 30s left (only when RED → GREEN transition approaching)
+        // Beep alerts when RED → GREEN approaching
         next.forEach((m, i) => {
             const cfgId = configs()[i].id;
             const secsLeft = Math.ceil(m.msUntilNext / 1000);
             if (m.nextLight === "GREEN") {
-                for (const { secs, count } of [{ secs: 60, count: 2 }, { secs: 30, count: 1 }]) {
+                for (const { secs, count } of [{ secs: 60, count: 3 }, { secs: 30, count: 2 }, { secs: 1, count: 1 }]) {
                     const key = `${cfgId}-${secs}`;
                     if (secsLeft <= secs && secsLeft > secs - 2) {
                         if (!firedBeeps.has(key)) { firedBeeps.add(key); beep(count); }
