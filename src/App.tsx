@@ -16,7 +16,7 @@ const BEST_CONFIGS: CalculatorConfig[] = [
     {
         id: "karveliskes",
         title: "Karveliskes → Vilnius",
-        greenSeconds: 129.992,
+        greenSeconds: 129.991,
         redSeconds: 900.919,
         startDate: "2026-05-06T14:25:44.920Z",
         adjustments: [],
@@ -24,7 +24,7 @@ const BEST_CONFIGS: CalculatorConfig[] = [
     {
         id: "vilnius",
         title: "Vilnius → Karveliskes",
-        greenSeconds: 130,
+        greenSeconds: 129.991,
         redSeconds: 900.919,
         startDate: "2026-05-06T16:34:14.457Z",
         adjustments: [],
